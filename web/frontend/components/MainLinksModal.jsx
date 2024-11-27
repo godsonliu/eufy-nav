@@ -52,6 +52,11 @@ const MainLinksModal = ({
     reset({ megaGroup });
   }, [headerSetting, mainLinksEditIndex]);
 
+  const modeTypeOptions = [
+    { label: "large", value: "large" },
+    { label: "small", value: "small" },
+  ];
+
   return (
     <Modal
       title={mode === "small" ? "support" : "links"}
@@ -63,6 +68,8 @@ const MainLinksModal = ({
         onAction: () => {
           handleSubmit((formData) => {
             const { megaGroup } = formData;
+
+            console.log(megaGroup, "-");
             const group = Object.entries(
               megaGroup?.reduce((acc, item) => {
                 const category = item?.category ?? "support";
@@ -96,15 +103,48 @@ const MainLinksModal = ({
       <Modal.Section>
         <Form>
           <FormLayout>
-            {fields?.map((field, index) => {
-              return (
-                <FormLayout.Group condensed key={field.id}>
-                  {mode !== "small" && (
+            {fields?.length ? (
+              fields?.map((field, index) => {
+                return (
+                  <FormLayout.Group condensed key={field.id}>
+                    {mode !== "small" && (
+                      <Controller
+                        render={({ field, fieldState }) => (
+                          <TextField
+                            required
+                            label="category"
+                            requiredIndicator
+                            error={fieldState.error?.message}
+                            {...field}
+                          />
+                        )}
+                        rules={{
+                          required: "This field is required",
+                        }}
+                        name={`megaGroup.${index}.category`}
+                        control={control}
+                      />
+                    )}
+                    {/* <Controller
+                      render={({ field, fieldState }) => (
+                        <Select
+                          required
+                          label="mode"
+                          requiredIndicator
+                          name="mode"
+                          options={modeTypeOptions}
+                          error={fieldState.error?.message}
+                          {...field}
+                        />
+                      )}
+                      name={`megaGroup.${index}.mode`}
+                      control={control}
+                    /> */}
                     <Controller
                       render={({ field, fieldState }) => (
                         <TextField
                           required
-                          label="category"
+                          label="title"
                           requiredIndicator
                           error={fieldState.error?.message}
                           {...field}
@@ -112,45 +152,49 @@ const MainLinksModal = ({
                       )}
                       rules={{
                         required: "This field is required",
+                        validate: (value) =>
+                          value.length <= 100 || "Max length is 100 characters", // 自定义校验
                       }}
-                      name={`megaGroup.${index}.category`}
+                      name={`megaGroup.${index}.label`}
                       control={control}
                     />
-                  )}
-                  <Controller
-                    render={({ field, fieldState }) => (
-                      <TextField
-                        required
-                        label="title"
-                        requiredIndicator
-                        error={fieldState.error?.message}
-                        {...field}
-                      />
-                    )}
-                    rules={{
-                      required: "This field is required",
-                    }}
-                    name={`megaGroup.${index}.label`}
-                    control={control}
-                  />
-                  <Controller
-                    render={({ field }) => (
-                      <TextField label="href" {...field} />
-                    )}
-                    name={`megaGroup.${index}.href`}
-                    control={control}
-                  />
-                  <div className="flex gap-4 h-full items-end pb-2">
-                    <Button plain monochrome onClick={() => remove(index)}>
-                      <Icon source={CircleMinusMinor}></Icon>
-                    </Button>
-                    <Button plain monochrome onClick={() => append()}>
-                      <Icon source={CirclePlusMinor}></Icon>
-                    </Button>
-                  </div>
-                </FormLayout.Group>
-              );
-            })}
+                    <Controller
+                      render={({ field }) => (
+                        <TextField label="tag" {...field} />
+                      )}
+                      name={`megaGroup.${index}.tag`}
+                      control={control}
+                    />
+                    <Controller
+                      render={({ field }) => (
+                        <TextField label="href" {...field} />
+                      )}
+                      name={`megaGroup.${index}.href`}
+                      control={control}
+                    />
+                    <div className="flex gap-4 h-full items-end pb-2">
+                      <Button plain monochrome onClick={() => remove(index)}>
+                        <Icon source={CircleMinusMinor}></Icon>
+                      </Button>
+                      {fields.length - 1 === index && (
+                        <Button plain monochrome onClick={() => append()}>
+                          <Icon source={CirclePlusMinor}></Icon>
+                        </Button>
+                      )}
+                    </div>
+                  </FormLayout.Group>
+                );
+              })
+            ) : (
+              <Button
+                plain
+                monochrome
+                icon={CirclePlusMinor}
+                onClick={() => append()}
+              >
+                Add Links
+              </Button>
+            )}
           </FormLayout>
         </Form>
       </Modal.Section>

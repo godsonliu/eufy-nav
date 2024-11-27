@@ -40,7 +40,6 @@ const MainCategoryModal = ({
     { label: "tab", value: "tab" },
     { label: "deals", value: "deals" },
     { label: "links", value: "links" },
-    { label: "support", value: "support" },
     { label: "live", value: "live" },
     { label: "无", value: "none" },
   ];
@@ -84,9 +83,12 @@ const MainCategoryModal = ({
                         error={fieldState.error?.message}
                         {...field}
                         onChange={(val) => {
-                          field?.onChange(val);
-                          setTypeChanged(true);
-                          setTypeChangedIndex(index);
+                          if (fields?.[index]?.label) {
+                            setTypeChanged(true);
+                          } else {
+                            setTypeChangedIndex(index);
+                            field?.onChange(val);
+                          }
                         }}
                       />
                     )}
@@ -108,6 +110,8 @@ const MainCategoryModal = ({
                     )}
                     rules={{
                       required: "This field is required",
+                      validate: (value) =>
+                        value.length <= 100 || "Max length is 100 characters", // 自定义校验
                     }}
                     name={`headerSettingData.${index}.label`}
                     control={control}
@@ -128,13 +132,15 @@ const MainCategoryModal = ({
                     <Button plain monochrome onClick={() => remove(index)}>
                       <Icon source={CircleMinusMinor}></Icon>
                     </Button>
-                    <Button
-                      plain
-                      monochrome
-                      onClick={() => append({ type: "tab" })}
-                    >
-                      <Icon source={CirclePlusMinor}></Icon>
-                    </Button>
+                    {fields.length - 1 === index && (
+                      <Button
+                        plain
+                        monochrome
+                        onClick={() => append({ type: "tab" })}
+                      >
+                        <Icon source={CirclePlusMinor}></Icon>
+                      </Button>
+                    )}
                   </div>
                 </FormLayout.Group>
               );
@@ -142,29 +148,32 @@ const MainCategoryModal = ({
           </FormLayout>
         </Form>
       </Modal.Section>
-      <Modal
-        open={typeChanged}
-        onClose={() => setTypeChanged(false)}
-        title="提醒"
-        primaryAction={{
-          content: "确定",
-          onAction: () => {
-            remove(typeChangedIndex);
-            setTypeChanged(false);
-          },
-        }}
-        secondaryActions={{
-          content: "取消",
-          destructive: true,
-          onAction: () => {
-            setTypeChanged(false);
-          },
-        }}
-      >
-        <Modal.Section>
-          <p>切换分类会清除此列数据</p>
-        </Modal.Section>
-      </Modal>
+      {typeChanged && (
+        <Modal
+          className="ml-2"
+          open={typeChanged}
+          onClose={() => setTypeChanged(false)}
+          title="提醒"
+          primaryAction={{
+            content: "确定",
+            onAction: () => {
+              remove(typeChangedIndex);
+              setTypeChanged(false);
+            },
+          }}
+          secondaryActions={{
+            content: "取消",
+            destructive: true,
+            onAction: () => {
+              setTypeChanged(false);
+            },
+          }}
+        >
+          <Modal.Section>
+            <p className="relative">切换分类会清除此列数据</p>
+          </Modal.Section>
+        </Modal>
+      )}
     </Modal>
   );
 };

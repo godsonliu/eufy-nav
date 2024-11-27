@@ -103,6 +103,8 @@ const SubTabCategoryModal = ({
                       )}
                       rules={{
                         required: "This field is required",
+                        validate: (value) =>
+                          value.length <= 100 || "Max length is 100 characters", // 自定义校验
                       }}
                       name={`tabTabs.${index}.label`}
                       control={control}
@@ -118,9 +120,11 @@ const SubTabCategoryModal = ({
                       <Button plain monochrome onClick={() => remove(index)}>
                         <Icon source={CircleMinusMinor}></Icon>
                       </Button>
-                      <Button plain monochrome onClick={() => append()}>
-                        <Icon source={CirclePlusMinor}></Icon>
-                      </Button>
+                      {fields.length - 1 === index && (
+                        <Button plain monochrome onClick={() => append()}>
+                          <Icon source={CirclePlusMinor}></Icon>
+                        </Button>
+                      )}
                     </div>
                   </FormLayout.Group>
                 );

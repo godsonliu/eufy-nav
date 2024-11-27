@@ -1415,7 +1415,13 @@ const Navbar = () => {
             href={url}
           >
             <span className={s.mainNavLinkText}>{item.label}</span>
-            {item.tag ? <span className={s.headerTag}>{item.tag}</span> : ""}
+            {item.tag
+              ? item.tag?.split(",")?.map((itemTag) => (
+                  <span key={itemTag} className={s.headerTag}>
+                    {itemTag}
+                  </span>
+                ))
+              : ""}
           </a>
         }
 
@@ -1487,6 +1493,7 @@ const Navbar = () => {
               plain
               monochrome
               icon={CirclePlusMinor}
+              disabled={!isEdit}
               onClick={() => {
                 setSku();
                 setTitle();
@@ -1528,6 +1535,7 @@ const Navbar = () => {
               plain
               monochrome
               icon={CirclePlusMinor}
+              disabled={!isEdit}
               onClick={() => {
                 setSubTabLinksEdit(true);
               }}
@@ -1568,17 +1576,19 @@ const Navbar = () => {
                 className={s.metaProductCollectItem}
                 key={idx}
                 onClick={() => {
-                  setCurrentSubChild(index);
-                  setCurrentLastChild(idx);
-                  setTitle(item.title);
-                  setDescription(item.description);
-                  setImg(item.img);
-                  setHref(item.href);
-                  setAllLabel(item?.all?.label);
-                  setAllHref(item?.all?.href);
-                  setMoreLabel(item?.more?.label);
-                  setMoreHref(item?.more?.href);
-                  setIsEditCollect(true);
+                  if (isEdit) {
+                    setCurrentSubChild(index);
+                    setCurrentLastChild(idx);
+                    setTitle(item.title);
+                    setDescription(item.description);
+                    setImg(item.img);
+                    setHref(item.href);
+                    setAllLabel(item?.all?.label);
+                    setAllHref(item?.all?.href);
+                    setMoreLabel(item?.more?.label);
+                    setMoreHref(item?.more?.href);
+                    setIsEditCollect(true);
+                  }
                 }}
               >
                 <a
@@ -1628,14 +1638,16 @@ const Navbar = () => {
                           }_copy`
                         )}
                         onClick={(e) => {
-                          setLabel(product.label);
-                          setHref(product.href);
-                          setCurrentSubChild(index);
-                          setCurrentLastChild(idx);
-                          setCurrentProductIndex(i);
-                          setIsEditCollectProduct(true);
-                          e.preventDefault();
-                          e.stopPropagation();
+                          if (isEdit) {
+                            setLabel(product.label);
+                            setHref(product.href);
+                            setCurrentSubChild(index);
+                            setCurrentLastChild(idx);
+                            setCurrentProductIndex(i);
+                            setIsEditCollectProduct(true);
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }
                         }}
                       >
                         {product.label}
@@ -1646,6 +1658,7 @@ const Navbar = () => {
                       plain
                       monochrome
                       icon={CirclePlusMinor}
+                      disabled={!isEdit}
                       onClick={(e) => {
                         setLabel();
                         setHref();
@@ -1699,6 +1712,7 @@ const Navbar = () => {
             plain
             monochrome
             icon={CirclePlusMinor}
+            disabled={!isEdit}
             onClick={() => {
               setCurrentSubChild(index);
               setCurrentLastChild(collects?.length || 0);
@@ -1727,12 +1741,12 @@ const Navbar = () => {
       const obj = {};
       tabs?.forEach((tab, idx) => {
         const tabKeys = Object.keys(tab);
-        if (tabKeys.includes("list")) {
-          obj[`${index}_${idx}`] = "list";
+        if (tabKeys.includes("collects")) {
+          obj[`${index}_${idx}`] = "collects";
         } else if (tabKeys.includes("tabs")) {
           obj[`${index}_${idx}`] = "tabs";
-        } else if (tabKeys.includes("collects")) {
-          obj[`${index}_${idx}`] = "collects";
+        } else if (tabKeys.includes("list")) {
+          obj[`${index}_${idx}`] = "list";
         }
         return obj;
       });
@@ -1765,8 +1779,10 @@ const Navbar = () => {
                                 }`}
                                 key={idx}
                                 onClick={() => {
-                                  setLabel(tab.label);
-                                  setIsEditLabel(true);
+                                  if (isEdit) {
+                                    setLabel(tab.label);
+                                    setIsEditLabel(true);
+                                  }
                                 }}
                               >
                                 <span
@@ -1811,6 +1827,7 @@ const Navbar = () => {
                       <Button
                         plain
                         monochrome
+                        disabled={!isEdit}
                         icon={CirclePlusMinor}
                         onClick={() => {
                           setMainTabEdit(true);
@@ -1882,6 +1899,7 @@ const Navbar = () => {
                                       plain
                                       monochrome
                                       icon={CirclePlusMinor}
+                                      disabled={!isEdit}
                                       onClick={() => {
                                         setSubTabCategoryEdit(true);
                                       }}
@@ -1962,6 +1980,7 @@ const Navbar = () => {
                       plain
                       monochrome
                       icon={CirclePlusMinor}
+                      disabled={!isEdit}
                       onClick={() => {
                         setLinkMode(mode || "");
                         setMainLinksEdit(true);
@@ -2008,6 +2027,7 @@ const Navbar = () => {
                       plain
                       monochrome
                       icon={CirclePlusMinor}
+                      disabled={!isEdit}
                       onClick={() => {
                         setMainDealsEdit(true);
                       }}
@@ -2826,53 +2846,61 @@ const Navbar = () => {
           </Modal.Section>
         </Modal>
 
-        <MainCategoryModal
-          mainCategoryEdit={mainCategoryEdit}
-          headerSetting={headerSetting}
-          onClose={() => setMainCategoryEdit(false)}
-          onSave={(dataSource) => {
-            updateMenus(dataSource, () => {
-              setMainCategoryEdit(false);
-            });
-          }}
-        />
+        {mainCategoryEdit && (
+          <MainCategoryModal
+            mainCategoryEdit={mainCategoryEdit}
+            headerSetting={headerSetting}
+            onClose={() => setMainCategoryEdit(false)}
+            onSave={(dataSource) => {
+              updateMenus(dataSource, () => {
+                setMainCategoryEdit(false);
+              });
+            }}
+          />
+        )}
 
-        <MainTabModal
-          mainTabEdit={mainTabEdit}
-          headerSetting={headerSetting}
-          mainTabEditIndex={current}
-          onClose={() => setMainTabEdit(false)}
-          onSave={(dataSource) => {
-            updateMenus(dataSource, () => {
-              setMainTabEdit(false);
-            });
-          }}
-        />
+        {mainTabEdit && (
+          <MainTabModal
+            mainTabEdit={mainTabEdit}
+            headerSetting={headerSetting}
+            mainTabEditIndex={current}
+            onClose={() => setMainTabEdit(false)}
+            onSave={(dataSource) => {
+              updateMenus(dataSource, () => {
+                setMainTabEdit(false);
+              });
+            }}
+          />
+        )}
 
-        <MainDealsModal
-          mainDealsEdit={mainDealsEdit}
-          headerSetting={headerSetting}
-          mainDealsEditIndex={current}
-          onClose={() => setMainDealsEdit(false)}
-          onSave={(dataSource) => {
-            updateMenus(dataSource, () => {
-              setMainDealsEdit(false);
-            });
-          }}
-        />
+        {mainDealsEdit && (
+          <MainDealsModal
+            mainDealsEdit={mainDealsEdit}
+            headerSetting={headerSetting}
+            mainDealsEditIndex={current}
+            onClose={() => setMainDealsEdit(false)}
+            onSave={(dataSource) => {
+              updateMenus(dataSource, () => {
+                setMainDealsEdit(false);
+              });
+            }}
+          />
+        )}
 
-        <MainLinksModal
-          mainLinksEdit={mainLinksEdit}
-          headerSetting={headerSetting}
-          mainLinksEditIndex={current}
-          onClose={() => setMainLinksEdit(false)}
-          mode={linkMode}
-          onSave={(dataSource) => {
-            updateMenus(dataSource, () => {
-              setMainLinksEdit(false);
-            });
-          }}
-        />
+        {mainLinksEdit && (
+          <MainLinksModal
+            mainLinksEdit={mainLinksEdit}
+            headerSetting={headerSetting}
+            mainLinksEditIndex={current}
+            onClose={() => setMainLinksEdit(false)}
+            mode={linkMode}
+            onSave={(dataSource) => {
+              updateMenus(dataSource, () => {
+                setMainLinksEdit(false);
+              });
+            }}
+          />
+        )}
 
         {subTabListEdit && (
           <SubTabListProductModal

@@ -94,6 +94,8 @@ const SubTabListProductModal = ({
     selectedSubTabType,
   ]);
 
+  console.log(selectedSubTabType, "selectedSubTabType");
+
   return (
     <Modal
       title="products"
@@ -164,8 +166,15 @@ const SubTabListProductModal = ({
                       )}
                       rules={{
                         required: "This field is required",
+                        validate: (value) =>
+                          value.length <= 100 || "Max length is 100 characters", // 自定义校验
                       }}
-                      name={`tabListProducts.${index}.label`}
+                      // name={`${
+                      //   selectedSubTabType === "list"
+                      //     ? `tabListProducts.${index}.label`
+                      //     : `tabListProducts.${index}.label`
+                      // }`}
+                      name={`tabListProducts.${index}.title`}
                       control={control}
                     />
                     <Controller
@@ -193,9 +202,11 @@ const SubTabListProductModal = ({
                       <Button plain monochrome onClick={() => remove(index)}>
                         <Icon source={CircleMinusMinor}></Icon>
                       </Button>
-                      <Button plain monochrome onClick={() => append()}>
-                        <Icon source={CirclePlusMinor}></Icon>
-                      </Button>
+                      {fields.length - 1 === index && (
+                        <Button plain monochrome onClick={() => append()}>
+                          <Icon source={CirclePlusMinor}></Icon>
+                        </Button>
+                      )}
                     </div>
                   </FormLayout.Group>
                 );
