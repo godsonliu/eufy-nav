@@ -85,72 +85,87 @@ const MainDealsModal = ({
       <Modal.Section>
         <Form>
           <FormLayout>
-            {fields?.map((field, index) => {
-              return (
-                <FormLayout.Group condensed key={field.id}>
-                  <Controller
-                    render={({ field, fieldState }) => (
-                      <Select
-                        required
-                        label="theme"
-                        requiredIndicator
-                        name="theme"
-                        options={themeTypeOptions}
-                        error={fieldState.error?.message}
-                        {...field}
-                      />
-                    )}
-                    name={`megaDeals.${index}.theme`}
-                    control={control}
-                  />
-                  <Controller
-                    render={({ field, fieldState }) => (
-                      <TextField
-                        required
-                        label="Title"
-                        requiredIndicator
-                        error={fieldState.error?.message}
-                        {...field}
-                      />
-                    )}
-                    rules={{
-                      required: "This field is required",
-                      validate: (value) =>
-                        value.length <= 100 || "Max length is 100 characters", // 自定义校验
-                    }}
-                    name={`megaDeals.${index}.title`}
-                    control={control}
-                  />
-                  <Controller
-                    render={({ field }) => (
-                      <TextField label="href" {...field} />
-                    )}
-                    name={`megaDeals.${index}.href`}
-                    control={control}
-                  />
-                  <Controller
-                    render={({ field }) => <TextField label="img" {...field} />}
-                    name={`megaDeals.${index}.img`}
-                    control={control}
-                  />
-                  <Controller
-                    render={({ field }) => <TextField label="btn" {...field} />}
-                    name={`megaDeals.${index}.btn`}
-                    control={control}
-                  />
-                  <div className="flex gap-4 h-full items-end pb-2">
-                    <Button plain monochrome onClick={() => remove(index)}>
-                      <Icon source={CircleMinusMinor}></Icon>
-                    </Button>
-                    {fields.length - 1 === index && (
-                      <Button plain monochrome onClick={() => append({})}>
-                        <Icon source={CirclePlusMinor}></Icon>
+            {fields?.length ? (
+              fields?.map((field, index) => {
+                return (
+                  <FormLayout.Group condensed key={field.id}>
+                    <Controller
+                      render={({ field, fieldState }) => (
+                        <Select
+                          required
+                          label="theme"
+                          requiredIndicator
+                          name="theme"
+                          options={themeTypeOptions}
+                          error={fieldState.error?.message}
+                          {...field}
+                        />
+                      )}
+                      name={`megaDeals.${index}.theme`}
+                      control={control}
+                    />
+                    <Controller
+                      render={({ field, fieldState }) => (
+                        <TextField
+                          required
+                          label="Title"
+                          requiredIndicator
+                          error={fieldState.error?.message}
+                          {...field}
+                        />
+                      )}
+                      rules={{
+                        required: "This field is required",
+                        validate: (value) =>
+                          value.length <= 100 || "Max length is 100 characters", // 自定义校验
+                      }}
+                      name={`megaDeals.${index}.title`}
+                      control={control}
+                    />
+                    <Controller
+                      render={({ field }) => (
+                        <TextField label="href" {...field} />
+                      )}
+                      name={`megaDeals.${index}.href`}
+                      control={control}
+                    />
+                    <Controller
+                      render={({ field }) => (
+                        <TextField label="img" {...field} />
+                      )}
+                      name={`megaDeals.${index}.img`}
+                      control={control}
+                    />
+                    <Controller
+                      render={({ field }) => (
+                        <TextField label="btn" {...field} />
+                      )}
+                      name={`megaDeals.${index}.btn`}
+                      control={control}
+                    />
+                    <div className="flex gap-4 h-full items-end pb-2">
+                      <Button plain monochrome onClick={() => remove(index)}>
+                        <Icon source={CircleMinusMinor}></Icon>
                       </Button>
-                    )}
-                  </div>
-                </FormLayout.Group>
-              );
-            })}
+                      {fields.length - 1 === index && (
+                        <Button plain monochrome onClick={() => append({})}>
+                          <Icon source={CirclePlusMinor}></Icon>
+                        </Button>
+                      )}
+                    </div>
+                  </FormLayout.Group>
+                );
+              })
+            ) : (
+              <Button
+                plain
+                monochrome
+                icon={CirclePlusMinor}
+                onClick={() => append()}
+              >
+                Add Deals
+              </Button>
+            )}
           </FormLayout>
         </Form>
       </Modal.Section>
