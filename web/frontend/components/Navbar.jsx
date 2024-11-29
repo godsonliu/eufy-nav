@@ -10,6 +10,7 @@ import {
   Box,
   Select,
   ButtonGroup,
+  InlineError,
 } from "@shopify/polaris";
 import {
   SearchMajor,
@@ -116,6 +117,10 @@ const Navbar = () => {
 
   const [subTabCategoryEdit, setSubTabCategoryEdit] = useState(false);
   const [selectedSubTabType, setSelectedSubTabType] = useState("");
+  const [error, setError] = useState("");
+  const [maxLengthError, setMaxLengthError] = useState("");
+
+  const [deleteCollectModal, setDeleteCollectModal] = useState(false);
 
   const userCenterSetting = {
     signIn: "Sign in",
@@ -1432,7 +1437,7 @@ const Navbar = () => {
     );
   };
 
-  const MegaProductContain = ({ tab, index, refidx, seeMore }) => {
+  const MegaProductContain = ({ tab, index, refidx, seeMore, type }) => {
     const { list = [], links = [], more } = tab;
     const moreLink = more || seeMore;
     const listLen = list && list.length > 4 ? 4 : list.length;
@@ -1531,17 +1536,19 @@ const Navbar = () => {
                 </div>
               );
             })}
-            <Button
-              plain
-              monochrome
-              icon={CirclePlusMinor}
-              disabled={!isEdit}
-              onClick={() => {
-                setSubTabLinksEdit(true);
-              }}
-            >
-              Add Links
-            </Button>
+            {type === "list" && (
+              <Button
+                plain
+                monochrome
+                icon={CirclePlusMinor}
+                disabled={!isEdit}
+                onClick={() => {
+                  setSubTabLinksEdit(true);
+                }}
+              >
+                Add Links
+              </Button>
+            )}
           </div>
           {moreLink && (
             <div>
@@ -1868,6 +1875,9 @@ const Navbar = () => {
                               tab={tab}
                               index={0}
                               seeMore={more}
+                              type={
+                                selectedSubLists[`${index}_${currentChild}`]
+                              }
                               refidx={idx + 1}
                             />
                           )}
@@ -1917,6 +1927,11 @@ const Navbar = () => {
                                       tab={subtab}
                                       seeMore={tab.more}
                                       index={subidx}
+                                      type={
+                                        selectedSubLists[
+                                          `${index}_${currentChild}`
+                                        ]
+                                      }
                                       refidx={`${idx + 1}_${subidx + 1}`}
                                     />
                                   );
@@ -2065,9 +2080,21 @@ const Navbar = () => {
                                   `navimenu_${index + 1}_1_${idx + 1}_copy`
                                 )}
                               ></a>
-                              <p className={s.dealsTitle}>{link.title}</p>
+                              <p
+                                style={{
+                                  color:
+                                    link.theme === "light" ? "#000" : "#fff",
+                                }}
+                                className={classNames(s.dealsTitle)}
+                              >
+                                {link.title}
+                              </p>
                               <a
                                 className={s.linkBtn}
+                                style={{
+                                  color:
+                                    link.theme === "light" ? "#000" : "#fff",
+                                }}
                                 href={handleMenuUrl(
                                   link.href,
                                   false,
@@ -2401,7 +2428,7 @@ const Navbar = () => {
         {isEdit ? (
           <>
             <Button onClick={() => setIsEdit(false)}>取消</Button>
-            <Button primary>保存</Button>
+            {/* <Button primary>保存</Button> */}
           </>
         ) : (
           <Button primary onClick={() => setIsEdit(true)}>
@@ -2457,6 +2484,11 @@ const Navbar = () => {
             onAction: () => {
               let _headerSetting = cloneDeep(headerSetting);
               let item = _headerSetting[current].tabs[currentChild];
+              if (!label.trim()) {
+                setError("This field is required");
+                return;
+              }
+              setError("");
               item.label = label;
               updateMenus(_headerSetting, () => {
                 setIsEditLabel(false);
@@ -2468,10 +2500,12 @@ const Navbar = () => {
             <Form>
               <FormLayout>
                 <TextField
+                  requiredIndicator
                   label="label"
                   value={label}
                   onChange={(value) => setLabel(value)}
                 />
+                {error && <InlineError message={error} fieldID="label" />}
               </FormLayout>
             </Form>
           </Modal.Section>
@@ -2572,106 +2606,168 @@ const Navbar = () => {
           </Modal.Section>
         </Modal>
 
-        <Modal
-          title="collect"
-          open={isEditCollect}
-          onClose={() => setIsEditCollect(false)}
-          primaryAction={{
-            content: "确定",
-            onAction: () => {
-              let _headerSetting = cloneDeep(headerSetting);
-              let parent = _headerSetting[current].tabs[currentChild];
-              if (!parent.collects) {
-                parent.collects = [];
-              }
-              if (!parent.collects[currentLastChild]) {
-                parent.collects[currentLastChild] = {};
-              }
-              let item = parent.collects[currentLastChild];
-              item.title = title;
-              item.description = description;
-              item.img = img;
-              item.href = href;
-              if (!item.all) {
-                item.all = {};
-              }
-              item.all.label = allLabel;
-              item.all.href = allHref;
-              if (!item.more) {
-                item.more = {};
-              }
-              item.more.label = moreLabel;
-              item.more.href = moreHref;
-              updateMenus(_headerSetting, () => {
-                setIsEditCollect(false);
-              });
-            },
-          }}
-          secondaryActions={{
-            content: "删除",
-            destructive: true,
-            onAction: () => {
-              let _headerSetting = cloneDeep(headerSetting);
-              let parent = _headerSetting[current].tabs[currentChild];
-              if (!parent.collects[currentLastChild]) {
-                setIsEditCollect(false);
-                return;
-              }
-              parent.collects.splice(currentLastChild, 1);
-              updateMenus(_headerSetting, () => {
-                setIsEditCollect(false);
-              });
-            },
-          }}
-        >
-          <Modal.Section>
-            <Form>
-              <FormLayout>
-                <TextField
-                  label="title"
-                  value={title}
-                  onChange={(value) => setTitle(value)}
-                />
-                <TextField
-                  label="description"
-                  value={description}
-                  onChange={(value) => setDescription(value)}
-                />
-                <TextField
-                  labelAction={labelAction}
-                  label="img"
-                  value={img}
-                  onChange={(value) => setImg(value)}
-                />
-                <TextField
-                  label="href"
-                  value={href}
-                  onChange={(value) => setHref(value)}
-                />
-                <TextField
-                  label="allLabel"
-                  value={allLabel}
-                  onChange={(value) => setAllLabel(value)}
-                />
-                <TextField
-                  label="allHref"
-                  value={allHref}
-                  onChange={(value) => setAllHref(value)}
-                />
-                <TextField
-                  label="moreLabel"
-                  value={moreLabel}
-                  onChange={(value) => setMoreLabel(value)}
-                />
-                <TextField
-                  label="moreHref"
-                  value={moreHref}
-                  onChange={(value) => setMoreHref(value)}
-                />
-              </FormLayout>
-            </Form>
-          </Modal.Section>
-        </Modal>
+        {isEditCollect && (
+          <Modal
+            title="collect"
+            open={isEditCollect}
+            onClose={() => setIsEditCollect(false)}
+            primaryAction={{
+              content: "确定",
+              onAction: () => {
+                if (
+                  !title?.trim() ||
+                  !description?.trim() ||
+                  !img?.trim() ||
+                  !href?.trim()
+                ) {
+                  setError("This field is required");
+                  return;
+                }
+                if (allLabel?.length > 100 || allHref?.length > 100) {
+                  setMaxLengthError("Max length is 100 characters");
+                  return;
+                }
+                setError("");
+                setMaxLengthError("");
+                let _headerSetting = cloneDeep(headerSetting);
+                let parent = _headerSetting[current].tabs[currentChild];
+                if (!parent.collects) {
+                  parent.collects = [];
+                }
+                if (!parent.collects[currentLastChild]) {
+                  parent.collects[currentLastChild] = {};
+                }
+                let item = parent.collects[currentLastChild];
+                item.title = title;
+                item.description = description;
+                item.img = img;
+                item.href = href;
+                if (!item.all) {
+                  item.all = {};
+                }
+                item.all.label = allLabel;
+                item.all.href = allHref;
+                if (!item.more) {
+                  item.more = {};
+                }
+                item.more.label = moreLabel;
+                item.more.href = moreHref;
+                updateMenus(_headerSetting, () => {
+                  setIsEditCollect(false);
+                });
+              },
+            }}
+            secondaryActions={{
+              content: "删除",
+              destructive: true,
+              onAction: () => {
+                setDeleteCollectModal(true);
+              },
+            }}
+          >
+            <Modal.Section>
+              <Form>
+                <FormLayout>
+                  <TextField
+                    requiredIndicator
+                    label="title"
+                    value={title}
+                    onChange={(value) => setTitle(value)}
+                  />
+                  {error && !title && (
+                    <InlineError message={error} fieldID="title" />
+                  )}
+                  <TextField
+                    label="description"
+                    requiredIndicator
+                    value={description}
+                    onChange={(value) => setDescription(value)}
+                  />
+                  {error && !description && (
+                    <InlineError message={error} fieldID="description" />
+                  )}
+                  <TextField
+                    requiredIndicator
+                    labelAction={labelAction}
+                    label="img"
+                    value={img}
+                    onChange={(value) => setImg(value)}
+                  />
+                  {error && !img && <InlineError message={error} />}
+                  <TextField
+                    requiredIndicator
+                    label="href"
+                    value={href}
+                    onChange={(value) => setHref(value)}
+                  />
+                  {error && !href && <InlineError message={error} />}
+                  <TextField
+                    label="allLabel"
+                    value={allLabel}
+                    onChange={(value) => setAllLabel(value)}
+                  />
+                  {maxLengthError && allLabel?.length > 100 && (
+                    <InlineError message={maxLengthError} />
+                  )}
+                  <TextField
+                    label="allHref"
+                    value={allHref}
+                    onChange={(value) => setAllHref(value)}
+                  />
+                  <TextField
+                    label="moreLabel"
+                    value={moreLabel}
+                    onChange={(value) => setMoreLabel(value)}
+                  />
+                  {maxLengthError && moreLabel?.length > 100 && (
+                    <InlineError message={maxLengthError} />
+                  )}
+                  <TextField
+                    label="moreHref"
+                    value={moreHref}
+                    onChange={(value) => setMoreHref(value)}
+                  />
+                </FormLayout>
+              </Form>
+            </Modal.Section>
+            {deleteCollectModal && (
+              <Modal
+                open={deleteCollectModal}
+                onClose={() => setDeleteCollectModal(false)}
+                title="请确认删除分类"
+                primaryAction={{
+                  content: "确定",
+                  onAction: () => {
+                    let _headerSetting = cloneDeep(headerSetting);
+                    let parent = _headerSetting[current].tabs[currentChild];
+                    if (!parent.collects[currentLastChild]) {
+                      setIsEditCollect(false);
+                      return;
+                    }
+                    parent.collects.splice(currentLastChild, 1);
+                    updateMenus(_headerSetting, () => {
+                      setIsEditCollect(false);
+                      setDeleteCollectModal(false);
+                    });
+                  },
+                }}
+                secondaryActions={{
+                  content: "取消",
+                  destructive: true,
+                  onAction: () => {
+                    setDeleteCollectModal(false);
+                  },
+                }}
+              >
+                <Modal.Section>
+                  <p className="relative">
+                    温馨提示：一旦确认删除分类，所有数据都被删除掉
+                  </p>
+                </Modal.Section>
+              </Modal>
+            )}
+          </Modal>
+        )}
 
         <Modal
           title="product"

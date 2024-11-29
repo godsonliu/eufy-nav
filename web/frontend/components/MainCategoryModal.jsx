@@ -23,11 +23,9 @@ const MainCategoryModal = ({
 }) => {
   const [typeChanged, setTypeChanged] = useState(false);
   const [typeChangedIndex, setTypeChangedIndex] = useState(0);
-  const { control, handleSubmit, reset } = useForm({
-    mode: "all",
-  });
+  const { control, handleSubmit, reset } = useForm();
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: "headerSettingData",
   });
@@ -42,6 +40,11 @@ const MainCategoryModal = ({
     { label: "links", value: "links" },
     { label: "live", value: "live" },
     { label: "无", value: "none" },
+  ];
+
+  const modeType = [
+    { label: "large", value: "large" },
+    { label: "small", value: "small" },
   ];
 
   return (
@@ -87,6 +90,7 @@ const MainCategoryModal = ({
                             setTypeChanged(true);
                           } else {
                             setTypeChangedIndex(index);
+                            update();
                             field?.onChange(val);
                           }
                         }}
@@ -128,6 +132,27 @@ const MainCategoryModal = ({
                     name={`headerSettingData.${index}.tag`}
                     control={control}
                   />
+                  {fields?.[index]?.type === "links" && (
+                    <Controller
+                      render={({ field, fieldState }) => (
+                        <Select
+                          required
+                          label="mode"
+                          requiredIndicator
+                          name="mode"
+                          options={modeType}
+                          error={fieldState.error?.message}
+                          {...field}
+                        />
+                      )}
+                      rules={{
+                        required: "This field is required",
+                      }}
+                      defaultValue={"large"}
+                      name={`headerSettingData.${index}.mode`}
+                      control={control}
+                    />
+                  )}
                   <div className="flex gap-4 h-full items-end pb-2">
                     <Button plain monochrome onClick={() => remove(index)}>
                       <Icon source={CircleMinusMinor}></Icon>

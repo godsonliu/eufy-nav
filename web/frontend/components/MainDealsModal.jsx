@@ -124,22 +124,31 @@ const MainDealsModal = ({
                     />
                     <Controller
                       render={({ field }) => (
-                        <TextField label="href" {...field} />
+                        <TextField label="href" requiredIndicator {...field} />
                       )}
+                      rules={{
+                        required: "This field is required",
+                      }}
                       name={`megaDeals.${index}.href`}
                       control={control}
                     />
                     <Controller
                       render={({ field }) => (
-                        <TextField label="img" {...field} />
+                        <TextField requiredIndicator label="img" {...field} />
                       )}
+                      rules={{
+                        required: "This field is required",
+                      }}
                       name={`megaDeals.${index}.img`}
                       control={control}
                     />
                     <Controller
                       render={({ field }) => (
-                        <TextField label="btn" {...field} />
+                        <TextField requiredIndicator label="btn" {...field} />
                       )}
+                      rules={{
+                        required: "This field is required",
+                      }}
                       name={`megaDeals.${index}.btn`}
                       control={control}
                     />

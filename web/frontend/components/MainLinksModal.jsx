@@ -158,17 +158,20 @@ const MainLinksModal = ({
                       name={`megaGroup.${index}.label`}
                       control={control}
                     />
-                    <Controller
+                    {/* <Controller
                       render={({ field }) => (
                         <TextField label="tag" {...field} />
                       )}
                       name={`megaGroup.${index}.tag`}
                       control={control}
-                    />
+                    /> */}
                     <Controller
                       render={({ field }) => (
-                        <TextField label="href" {...field} />
+                        <TextField requiredIndicator label="href" {...field} />
                       )}
+                      rules={{
+                        required: "This field is required",
+                      }}
                       name={`megaGroup.${index}.href`}
                       control={control}
                     />
