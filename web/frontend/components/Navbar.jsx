@@ -1437,11 +1437,20 @@ const Navbar = () => {
     );
   };
 
-  const MegaProductContain = ({ tab, index, refidx, seeMore, type }) => {
+  const MegaProductContain = ({
+    tab,
+    index,
+    refidx,
+    seeMore,
+    tabLinks,
+    type,
+  }) => {
     const { list = [], links = [], more } = tab;
+    console.log(tabLinks, "tabLinks");
+    const linksTemp = type === "tabs" ? tabLinks : links;
     const moreLink = more || seeMore;
     const listLen = list && list.length > 4 ? 4 : list.length;
-    const linksLen = (links && links.length) || 0;
+    const linksLen = (linksTemp && linksTemp.length) || 0;
     return (
       <div
         className={`${s.megaProductContain} ${
@@ -1517,7 +1526,7 @@ const Navbar = () => {
         </ul>
         <div className="flex items-center justify-between pt-6">
           <div className={s.megaCollectLinks}>
-            {links.map((item, idx) => {
+            {linksTemp.map((item, idx) => {
               return (
                 <div key={idx}>
                   <a
@@ -1536,19 +1545,17 @@ const Navbar = () => {
                 </div>
               );
             })}
-            {type === "list" && (
-              <Button
-                plain
-                monochrome
-                icon={CirclePlusMinor}
-                disabled={!isEdit}
-                onClick={() => {
-                  setSubTabLinksEdit(true);
-                }}
-              >
-                Add Links
-              </Button>
-            )}
+            <Button
+              plain
+              monochrome
+              icon={CirclePlusMinor}
+              disabled={!isEdit}
+              onClick={() => {
+                setSubTabLinksEdit(true);
+              }}
+            >
+              Add Links
+            </Button>
           </div>
           {moreLink && (
             <div>
@@ -1874,6 +1881,7 @@ const Navbar = () => {
                             <MegaProductContain
                               tab={tab}
                               index={0}
+                              tabLinks={links}
                               seeMore={more}
                               type={
                                 selectedSubLists[`${index}_${currentChild}`]
@@ -1925,6 +1933,7 @@ const Navbar = () => {
                                     <MegaProductContain
                                       key={subidx}
                                       tab={subtab}
+                                      tabLinks={tab?.links}
                                       seeMore={tab.more}
                                       index={subidx}
                                       type={
@@ -2623,7 +2632,11 @@ const Navbar = () => {
                   setError("This field is required");
                   return;
                 }
-                if (allLabel?.length > 100 || allHref?.length > 100) {
+                if (
+                  title?.length > 100 ||
+                  allLabel?.length > 100 ||
+                  allHref?.length > 100
+                ) {
                   setMaxLengthError("Max length is 100 characters");
                   return;
                 }
@@ -2676,6 +2689,9 @@ const Navbar = () => {
                   />
                   {error && !title && (
                     <InlineError message={error} fieldID="title" />
+                  )}
+                  {maxLengthError && title?.length > 100 && (
+                    <InlineError message={maxLengthError} />
                   )}
                   <TextField
                     label="description"

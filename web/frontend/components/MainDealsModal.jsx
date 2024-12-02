@@ -123,8 +123,13 @@ const MainDealsModal = ({
                       control={control}
                     />
                     <Controller
-                      render={({ field }) => (
-                        <TextField label="href" requiredIndicator {...field} />
+                      render={({ field, fieldState }) => (
+                        <TextField
+                          label="href"
+                          error={fieldState.error?.message}
+                          requiredIndicator
+                          {...field}
+                        />
                       )}
                       rules={{
                         required: "This field is required",
@@ -133,8 +138,13 @@ const MainDealsModal = ({
                       control={control}
                     />
                     <Controller
-                      render={({ field }) => (
-                        <TextField requiredIndicator label="img" {...field} />
+                      render={({ field, fieldState }) => (
+                        <TextField
+                          requiredIndicator
+                          error={fieldState.error?.message}
+                          label="img"
+                          {...field}
+                        />
                       )}
                       rules={{
                         required: "This field is required",
@@ -143,8 +153,13 @@ const MainDealsModal = ({
                       control={control}
                     />
                     <Controller
-                      render={({ field }) => (
-                        <TextField requiredIndicator label="btn" {...field} />
+                      render={({ field, fieldState }) => (
+                        <TextField
+                          requiredIndicator
+                          error={fieldState.error?.message}
+                          label="btn"
+                          {...field}
+                        />
                       )}
                       rules={{
                         required: "This field is required",
