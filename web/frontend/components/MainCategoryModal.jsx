@@ -72,104 +72,117 @@ const MainCategoryModal = ({
       <Modal.Section>
         <Form>
           <FormLayout>
-            {fields?.map((field, index) => {
-              return (
-                <FormLayout.Group condensed key={field.id}>
-                  <Controller
-                    render={({ field, fieldState }) => (
-                      <Select
-                        required
-                        label="Type"
-                        requiredIndicator
-                        name="type"
-                        options={mainCategoryTypeOptions}
-                        error={fieldState.error?.message}
-                        {...field}
-                        onChange={(val) => {
-                          if (fields?.[index]?.label) {
-                            setTypeChanged(true);
-                          } else {
-                            setTypeChangedIndex(index);
-                            update();
-                            field?.onChange(val);
-                          }
-                        }}
-                      />
-                    )}
-                    rules={{
-                      required: "This field is required",
-                    }}
-                    name={`headerSettingData.${index}.type`}
-                    control={control}
-                  />
-                  <Controller
-                    render={({ field, fieldState }) => (
-                      <TextField
-                        required
-                        label="Title"
-                        requiredIndicator
-                        error={fieldState.error?.message}
-                        {...field}
-                      />
-                    )}
-                    rules={{
-                      required: "This field is required",
-                      validate: (value) =>
-                        value.length <= 100 || "Max length is 100 characters", // 自定义校验
-                    }}
-                    name={`headerSettingData.${index}.label`}
-                    control={control}
-                  />
-                  <Controller
-                    render={({ field }) => (
-                      <TextField label="href" {...field} />
-                    )}
-                    name={`headerSettingData.${index}.href`}
-                    control={control}
-                  />
-                  <Controller
-                    render={({ field }) => <TextField label="tag" {...field} />}
-                    name={`headerSettingData.${index}.tag`}
-                    control={control}
-                  />
-                  {fields?.[index]?.type === "links" && (
+            {fields?.length ? (
+              fields?.map((field, index) => {
+                return (
+                  <FormLayout.Group condensed key={field.id}>
                     <Controller
                       render={({ field, fieldState }) => (
                         <Select
                           required
-                          label="mode"
+                          label="Type"
                           requiredIndicator
-                          name="mode"
-                          options={modeType}
+                          name="type"
+                          options={mainCategoryTypeOptions}
+                          error={fieldState.error?.message}
+                          {...field}
+                          onChange={(val) => {
+                            if (fields?.[index]?.label) {
+                              setTypeChanged(true);
+                            } else {
+                              setTypeChangedIndex(index);
+                              update();
+                              field?.onChange(val);
+                            }
+                          }}
+                        />
+                      )}
+                      rules={{
+                        required: "This field is required",
+                      }}
+                      name={`headerSettingData.${index}.type`}
+                      control={control}
+                    />
+                    <Controller
+                      render={({ field, fieldState }) => (
+                        <TextField
+                          required
+                          label="Title"
+                          requiredIndicator
                           error={fieldState.error?.message}
                           {...field}
                         />
                       )}
                       rules={{
                         required: "This field is required",
+                        validate: (value) =>
+                          value.length <= 100 || "Max length is 100 characters", // 自定义校验
                       }}
-                      defaultValue={"large"}
-                      name={`headerSettingData.${index}.mode`}
+                      name={`headerSettingData.${index}.label`}
                       control={control}
                     />
-                  )}
-                  <div className="flex gap-4 h-full items-end pb-2">
-                    <Button plain monochrome onClick={() => remove(index)}>
-                      <Icon source={CircleMinusMinor}></Icon>
-                    </Button>
-                    {fields.length - 1 === index && (
-                      <Button
-                        plain
-                        monochrome
-                        onClick={() => append({ type: "tab" })}
-                      >
-                        <Icon source={CirclePlusMinor}></Icon>
-                      </Button>
+                    <Controller
+                      render={({ field }) => (
+                        <TextField label="href" {...field} />
+                      )}
+                      name={`headerSettingData.${index}.href`}
+                      control={control}
+                    />
+                    <Controller
+                      render={({ field }) => (
+                        <TextField label="tag" {...field} />
+                      )}
+                      name={`headerSettingData.${index}.tag`}
+                      control={control}
+                    />
+                    {fields?.[index]?.type === "links" && (
+                      <Controller
+                        render={({ field, fieldState }) => (
+                          <Select
+                            required
+                            label="mode"
+                            requiredIndicator
+                            name="mode"
+                            options={modeType}
+                            error={fieldState.error?.message}
+                            {...field}
+                          />
+                        )}
+                        rules={{
+                          required: "This field is required",
+                        }}
+                        defaultValue={"large"}
+                        name={`headerSettingData.${index}.mode`}
+                        control={control}
+                      />
                     )}
-                  </div>
-                </FormLayout.Group>
-              );
-            })}
+                    <div className="flex gap-4 h-full items-end pb-2">
+                      <Button plain monochrome onClick={() => remove(index)}>
+                        <Icon source={CircleMinusMinor}></Icon>
+                      </Button>
+                      {fields.length - 1 === index && (
+                        <Button
+                          plain
+                          monochrome
+                          onClick={() => append({ type: "tab" })}
+                        >
+                          <Icon source={CirclePlusMinor}></Icon>
+                        </Button>
+                      )}
+                    </div>
+                  </FormLayout.Group>
+                );
+              })
+            ) : (
+              <Button
+                plain
+                monochrome
+                icon={CirclePlusMinor}
+                onClick={() => append({ type: "tab" })}
+              >
+                Add 一级分类
+              </Button>
+            )}
           </FormLayout>
         </Form>
       </Modal.Section>
