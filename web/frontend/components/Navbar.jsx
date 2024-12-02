@@ -1442,11 +1442,10 @@ const Navbar = () => {
     index,
     refidx,
     seeMore,
-    tabLinks,
+    tabLinks = [],
     type,
   }) => {
     const { list = [], links = [], more } = tab;
-    console.log(tabLinks, "tabLinks");
     const linksTemp = type === "tabs" ? tabLinks : links;
     const moreLink = more || seeMore;
     const listLen = list && list.length > 4 ? 4 : list.length;
@@ -1526,7 +1525,7 @@ const Navbar = () => {
         </ul>
         <div className="flex items-center justify-between pt-6">
           <div className={s.megaCollectLinks}>
-            {linksTemp.map((item, idx) => {
+            {linksTemp?.map((item, idx) => {
               return (
                 <div key={idx}>
                   <a
