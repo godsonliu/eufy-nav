@@ -122,6 +122,8 @@ const Navbar = () => {
 
   const [deleteCollectModal, setDeleteCollectModal] = useState(false);
 
+  const [changeTabStyle, setChangeTabStyle] = useState(false);
+
   const userCenterSetting = {
     signIn: "Sign in",
     signUp: "Sign up",
@@ -1855,6 +1857,20 @@ const Navbar = () => {
                       s[`megaTab${mode || "normal"}Content`]
                     }`}
                   >
+                    <div className="absolute z-[10] right-4 top-0">
+                      <Button
+                        primary
+                        disabled={!isEdit}
+                        onClick={() => {
+                          setChangeTabStyle(true);
+                          setSelectedSubTabType(
+                            selectedSubLists[`${index}_${currentChild}`]
+                          );
+                        }}
+                      >
+                        更换样式
+                      </Button>
+                    </div>
                     {tabs?.map((tab, idx) => {
                       const subTabEmpty =
                         !tab?.tabs && !tab?.collects && !tab?.list;
@@ -3058,6 +3074,37 @@ const Navbar = () => {
               });
             }}
           />
+        )}
+
+        {changeTabStyle && (
+          <Modal
+            title="请确认删除分类"
+            open={changeTabStyle}
+            onClose={() => setChangeTabStyle(false)}
+            primaryAction={{
+              content: "确定",
+              onAction: () => {
+                let _headerSetting = cloneDeep(headerSetting);
+                _headerSetting?.[current]?.tabs?.splice(currentChild, 1);
+                updateMenus(_headerSetting, () => {
+                  setChangeTabStyle(false);
+                });
+              },
+            }}
+            secondaryActions={{
+              content: "取消",
+              destructive: true,
+              onAction: () => {
+                setChangeTabStyle(false);
+              },
+            }}
+          >
+            <Modal.Section>
+              <p className="text-center">
+                温馨提示：一旦确认删除分类， 原有数据将被删除掉
+              </p>
+            </Modal.Section>
+          </Modal>
         )}
       </header>
     </>

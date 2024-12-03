@@ -49,7 +49,7 @@ const SubTabListProductModal = ({
   subTabListEditIndex,
   subTabListProductsEditIndex = 0,
   subTabListCategoryEditIndex,
-  selectedSubTabType,
+  selectedSubTabType = "tabs",
 }) => {
   const { control, handleSubmit, reset } = useForm({
     mode: "all",
@@ -73,7 +73,6 @@ const SubTabListProductModal = ({
       if (subTabList && Array.isArray(subTabList)) {
         subTabList.forEach((item) => subTabTab.push(item));
       }
-      console.log(subTabTab, "subTabTab");
       reset({
         tabListProducts: subTabTab,
       });
@@ -82,7 +81,6 @@ const SubTabListProductModal = ({
       if (list && Array.isArray(list)) {
         list.forEach((item) => tabListProducts.push(item));
       }
-      console.log(tabListProducts, "tabListProducts");
       reset({
         tabListProducts: tabListProducts,
       });
@@ -93,8 +91,6 @@ const SubTabListProductModal = ({
     subTabListProductsEditIndex,
     selectedSubTabType,
   ]);
-
-  console.log(selectedSubTabType, "selectedSubTabType");
 
   return (
     <Modal
@@ -135,7 +131,8 @@ const SubTabListProductModal = ({
                 tabListProducts
               );
             }
-            onSave && onSave(result);
+            console.log(result, "result");
+            // onSave && onSave(result);
           })();
         },
       }}
