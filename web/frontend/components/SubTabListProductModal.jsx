@@ -132,7 +132,7 @@ const SubTabListProductModal = ({
               );
             }
             console.log(result, "result");
-            // onSave && onSave(result);
+            onSave && onSave(result);
           })();
         },
       }}
