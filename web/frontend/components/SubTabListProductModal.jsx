@@ -189,8 +189,14 @@ const SubTabListProductModal = ({
                       control={control}
                     />
                     <Controller
-                      render={({ field }) => (
-                        <TextField label="img" required {...field} />
+                      render={({ field, fieldState }) => (
+                        <TextField
+                          label="img"
+                          requiredIndicator
+                          required
+                          error={fieldState.error?.message}
+                          {...field}
+                        />
                       )}
                       rules={{
                         required: "This field is required",

@@ -2451,7 +2451,7 @@ const Navbar = () => {
       <Box className="flex justify-end gap-4 pr-4">
         {isEdit ? (
           <>
-            <Button onClick={() => setIsEdit(false)}>取消</Button>
+            <Button onClick={() => setIsEdit(false)}>关闭</Button>
             {/* <Button primary>保存</Button> */}
           </>
         ) : (
