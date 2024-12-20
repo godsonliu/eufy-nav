@@ -105,9 +105,8 @@ const SubTabListProductModal = ({
             console.log(formData, "formData");
             const { tabListProducts } = formData;
             let _headerSetting = cloneDeep(headerSetting);
-            let result = [];
             if (selectedSubTabType === "list") {
-              result = _headerSetting.map((item, index) => {
+              _headerSetting = _headerSetting.map((item, index) => {
                 if (subTabListEditIndex === index) {
                   const { tabs = [] } = item;
                   return {
@@ -123,7 +122,7 @@ const SubTabListProductModal = ({
                 }
               });
             } else if (selectedSubTabType === "tabs") {
-              result = updateNestedTabs(
+              _headerSetting = updateNestedTabs(
                 _headerSetting,
                 subTabListEditIndex,
                 subTabListProductsEditIndex,
@@ -131,8 +130,7 @@ const SubTabListProductModal = ({
                 tabListProducts
               );
             }
-            console.log(result, "result");
-            onSave && onSave(result);
+            !!_headerSetting?.length && onSave && onSave(_headerSetting);
           })();
         },
       }}

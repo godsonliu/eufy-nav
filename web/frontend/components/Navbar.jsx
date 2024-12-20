@@ -1519,6 +1519,7 @@ const Navbar = () => {
                 setCurrentLastChild(list?.length || 0);
                 // setIsEditTab(true);
                 setSubTabListEdit(true);
+                setSelectedSubTabType(type);
               }}
             >
               Add
@@ -1804,9 +1805,6 @@ const Navbar = () => {
                                   onMouseEnter={() => {
                                     setCurrentChild(idx);
                                     setCurrentSubTab(0);
-                                    setSelectedSubTabType(
-                                      selectedSubLists[`${index}_${idx}`]
-                                    );
                                   }}
                                 >
                                   {tab.label}
@@ -1898,9 +1896,7 @@ const Navbar = () => {
                               index={0}
                               tabLinks={links}
                               seeMore={more}
-                              type={
-                                selectedSubLists[`${index}_${currentChild}`]
-                              }
+                              type="list"
                               refidx={idx + 1}
                             />
                           )}
@@ -1951,11 +1947,7 @@ const Navbar = () => {
                                       tabLinks={tab?.links}
                                       seeMore={tab.more}
                                       index={subidx}
-                                      type={
-                                        selectedSubLists[
-                                          `${index}_${currentChild}`
-                                        ]
-                                      }
+                                      type={"tabs"}
                                       refidx={`${idx + 1}_${subidx + 1}`}
                                     />
                                   );
@@ -2873,7 +2865,6 @@ const Navbar = () => {
             </Form>
           </Modal.Section>
         </Modal>
-
         <Modal
           title="sublink"
           open={isSubEditLink}
@@ -2907,7 +2898,6 @@ const Navbar = () => {
             </Form>
           </Modal.Section>
         </Modal>
-
         <Modal
           title="morelink"
           open={isEditLinkMore}
@@ -2943,7 +2933,6 @@ const Navbar = () => {
             </Form>
           </Modal.Section>
         </Modal>
-
         <Modal
           title="more"
           open={isEditMore}
@@ -2972,7 +2961,6 @@ const Navbar = () => {
             </Form>
           </Modal.Section>
         </Modal>
-
         {mainCategoryEdit && (
           <MainCategoryModal
             mainCategoryEdit={mainCategoryEdit}
@@ -2985,7 +2973,6 @@ const Navbar = () => {
             }}
           />
         )}
-
         {mainTabEdit && (
           <MainTabModal
             mainTabEdit={mainTabEdit}
@@ -2999,7 +2986,6 @@ const Navbar = () => {
             }}
           />
         )}
-
         {mainDealsEdit && (
           <MainDealsModal
             mainDealsEdit={mainDealsEdit}
@@ -3013,7 +2999,6 @@ const Navbar = () => {
             }}
           />
         )}
-
         {mainLinksEdit && (
           <MainLinksModal
             mainLinksEdit={mainLinksEdit}
@@ -3028,7 +3013,6 @@ const Navbar = () => {
             }}
           />
         )}
-
         {subTabListEdit && (
           <SubTabListProductModal
             subTabListEdit={subTabListEdit}
@@ -3045,7 +3029,6 @@ const Navbar = () => {
             }}
           />
         )}
-
         {subTabLinksEdit && (
           <SubTabLinksModal
             subTabLinksEdit={subTabLinksEdit}
@@ -3060,7 +3043,6 @@ const Navbar = () => {
             subTabLinksEditIndex={currentChild}
           />
         )}
-
         {subTabCategoryEdit && (
           <SubTabCategoryModal
             subTabCategoryEdit={subTabCategoryEdit}
