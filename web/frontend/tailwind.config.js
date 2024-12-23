@@ -1,0 +1,128 @@
+module.exports = {
+  plugins: [
+    require("@tailwindcss/aspect-ratio"),
+    require("@tailwindcss/line-clamp"),
+  ],
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./templates/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    screens: {
+      xs: { max: "375px" },
+      sm: { max: "640px" },
+      md: { max: "767px" },
+      l: { max: "1023px" },
+      x: { max: "1280px" },
+      xl: { max: "1439px" },
+      xxl: { max: "1920px" },
+      xxxl: { max: "2560px" },
+      "min-md": { min: "768px" },
+      "min-l": { min: "1024px" },
+      "min-x": { min: "1280px" },
+      "min-xl": { min: "1440px" },
+      "min-xsl": { min: "1890px" },
+      "min-xxl": { min: "1920px" },
+      "min-xxxl": { min: "2560px" },
+      "l-lx": { min: "1024px", max: "1459px" },
+      "md-l": { min: "768px", max: "1023px" },
+      "md-xxl": { min: "768px", max: "1919px" },
+      desktop: { min: "1441px" },
+
+      // 以下格式待废弃
+      xm: { min: "376px", max: "768px" },
+      lg: { min: "769px", max: "1024px" },
+      mx: { min: "769px", max: "1280px" },
+      mxl: { min: "769px", max: "1440px" },
+    },
+    extend: {
+      maxWidth: {
+        base: "1200px",
+        "8xl": "1920px",
+      },
+      colors: {
+        primary: "var(--primary)",
+        "primary-2": "var(--primary-2)",
+        secondary: "var(--secondary)",
+        "secondary-2": "var(--secondary-2)",
+        hover: "var(--hover)",
+        "hover-1": "var(--hover-1)",
+        "hover-2": "var(--hover-2)",
+        "accent-0": "var(--accent-0)",
+        "accent-1": "var(--accent-1)",
+        "accent-2": "var(--accent-2)",
+        "accent-3": "var(--accent-3)",
+        "accent-4": "var(--accent-4)",
+        "accent-5": "var(--accent-5)",
+        "accent-6": "var(--accent-6)",
+        "accent-7": "var(--accent-7)",
+        "accent-8": "var(--accent-8)",
+        "accent-9": "var(--accent-9)",
+        violet: "var(--violet)",
+        "violet-light": "var(--violet-light)",
+        "violet-dark": "var(--violet-dark)",
+        pink: "var(--pink)",
+        "pink-light": "var(--pink-light)",
+        cyan: "var(--cyan)",
+        blue: "var(--blue)",
+        green: "var(--green)",
+        red: "var(--red)",
+        "brand-color": "var(--brand-color)",
+        "brand-sub-color": "var(--brand-sub-color)",
+        "anker-color": "var(--anker-color)",
+        "eufy-color": "var(--eufy-color)",
+        "soundcore-color": "var(--soundcore-color)",
+        "nebula-color": "var(--nebula-color)",
+        "brand-button-color": "var(--brand-button-bg-color)",
+      },
+      textColor: {
+        primary: "var(--text-primary)",
+        secondary: "var(--text-secondary)",
+        "brand-color": "var(--brand-text-color)",
+        "brand-sub-color": "var(--brand-sub-color)",
+        "brand-button-color": "var(--brand-button-text-color)",
+      },
+      boxShadow: {
+        "outline-normal": "0 0 0 2px var(--accent-2)",
+        magical:
+          "rgba(0, 0, 0, 0.02) 0px 30px 30px, rgba(0, 0, 0, 0.03) 0px 0px 8px, rgba(0, 0, 0, 0.05) 0px 1px 0px",
+      },
+      lineHeight: {
+        "extra-loose": "2.2",
+      },
+      scale: {
+        120: "1.2",
+      },
+      gridTemplateRows: {
+        12: "repeat(12, minmax(0, 1fr))",
+        14: "repeat(14, minmax(0, 1fr))",
+      },
+      gridRow: {
+        "span-10": "span 10 / span 10",
+        "span-12": "span 12 / span 12",
+      },
+      gridTemplateColumns: {
+        12: "repeat(12, minmax(0, 1fr))",
+        14: "repeat(14, minmax(0, 1fr))",
+      },
+      gridColumn: {
+        "span-10": "span 10 / span 10",
+        "span-12": "span 12 / span 12",
+        "span-layer-10-canter12": "2 / span 10",
+        "span-layer-12-canter14": "2 / span 12",
+        "span-layer-12-full": "1 / span 12",
+      },
+      animation: {
+        widthTransform:
+          "widthTransform 5s cubic-bezier(0.075, 0.75, 0.875, 0.36) infinite",
+      },
+      keyframes: {
+        widthTransform: {
+          "0%": { width: "0%" },
+          "100%": { width: "100%" },
+        },
+      },
+    },
+  },
+};

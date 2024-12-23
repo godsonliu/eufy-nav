@@ -8,7 +8,6 @@
     "dev": "vite",
     "coverage": "vitest run --coverage"
   },
-  "type": "module",
   "engines": {
     "node": ">= 12.16"
   },
@@ -24,10 +23,14 @@
     "@shopify/i18next-shopify": "^0.2.3",
     "@shopify/polaris": "^10.49.1",
     "@vitejs/plugin-react": "1.2.0",
+    "classnames": "^2.3.2",
+    "dotenv": "^16.3.1",
     "i18next": "^23.1.0",
     "i18next-resources-to-backend": "^1.1.4",
+    "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-hook-form": "^7.54.2",
     "react-i18next": "^13.0.0",
     "react-query": "^3.34.19",
     "react-router-dom": "^6.3.0",
@@ -35,10 +38,17 @@
   },
   "devDependencies": {
     "@shopify/stylelint-polaris": "^12.0.0",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/line-clamp": "^0.4.4",
+    "autoprefixer": "^10.4.16",
     "history": "^5.3.0",
     "jsdom": "^19.0.0",
+    "postcss": "^8.4.31",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-import": "^15.1.0",
     "prettier": "^2.6.0",
     "stylelint": "^15.6.1",
+    "tailwindcss": "^3.3.5",
     "vi-fetch": "^0.6.1"
   }
 }

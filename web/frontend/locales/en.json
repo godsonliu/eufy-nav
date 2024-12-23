@@ -34,5 +34,8 @@
     },
     "title": "Product Counter",
     "totalProductsHeading": "TOTAL PRODUCTS"
+  },
+  "Collection": {
+    "pageName": "collection config"
   }
 }

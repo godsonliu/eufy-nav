@@ -1,5 +1,5 @@
 {
-  "name": "shop-app",
+  "name": "eufy-nav",
   "version": "1.0.0",
   "main": "web/index.js",
   "license": "UNLICENSED",
@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@shopify/app": "3.47.3",
-    "@shopify/cli": "3.47.3"
+    "@shopify/cli": "3.47.3",
+    "react-hook-form": "^7.53.2"
   },
   "author": "anker",
   "private": true,

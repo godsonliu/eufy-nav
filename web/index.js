@@ -1,4 +1,3 @@
-// @ts-check
 import { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
@@ -7,6 +6,7 @@ import serveStatic from "serve-static";
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import GDPRWebhookHandlers from "./gdpr.js";
+import { DataType } from "@shopify/shopify-api";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -39,25 +39,29 @@ app.use("/api/*", shopify.validateAuthenticatedSession());
 
 app.use(express.json());
 
-app.get("/api/products/count", async (_req, res) => {
-  const countData = await shopify.api.rest.Product.count({
-    session: res.locals.shopify.session,
+app.get("/api/metafield", async (req, res) => {
+  const session = res.locals.shopify.session;
+  const client = new shopify.api.clients.Rest({ session });
+
+  const response = await client.get({
+    path: "metafields",
+    query: req.query,
   });
-  res.status(200).send(countData);
+  res.status(200).send(response.body.metafields);
 });
 
-app.get("/api/products/create", async (_req, res) => {
-  let status = 200;
-  let error = null;
-
-  try {
-    await productCreator(res.locals.shopify.session);
-  } catch (e) {
-    console.log(`Failed to process products/create: ${e.message}`);
-    status = 500;
-    error = e.message;
-  }
-  res.status(status).send({ success: status === 200, error });
+app.post("/api/metafield", async (req, res) => {
+  const metafield = req.body;
+  const session = res.locals.shopify.session;
+  const client = new shopify.api.clients.Rest({ session });
+  const response = await client.put({
+    path: `metafields/${metafield.id}`,
+    type: DataType.JSON,
+    data: {
+      metafield,
+    },
+  });
+  res.status(200).send(response);
 });
 
 app.use(shopify.cspHeaders());

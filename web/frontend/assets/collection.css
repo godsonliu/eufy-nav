@@ -1,0 +1,39 @@
+.Polaris-Layout__Section {
+  margin-bottom: 1rem;
+}
+.close {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 16px;
+  height: 16px;
+  fill: #aaa;
+  transition: 0.2s;
+}
+.close:hover {
+  transform: rotate(90deg);
+}
+.options-wrap {
+  position: relative;
+  padding-right: 30px;
+}
+.options-wrap .Polaris-FormLayout__Item {
+  margin-top: 0;
+}
+.options-wrap .Polaris-FormLayout__Item:first-child {
+  margin-left: 0;
+}
+.options-wrap .Polaris-FormLayout__Item:nth-child(3) {
+  position: absolute;
+  min-width: 0;
+  right: 0;
+  top: 8px;
+  cursor: pointer;
+}
+.moving {
+  border: 1px dashed #f00;
+  transition: 0.2s;
+}
+.moving > * {
+  opacity: 0;
+}
