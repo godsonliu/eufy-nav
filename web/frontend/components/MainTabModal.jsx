@@ -25,7 +25,6 @@ const MainTabModal = ({
 }) => {
   const [typeChanged, setTypeChanged] = useState(false);
   const [typeChangedIndex, setTypeChangedIndex] = useState(0);
-  const [typeChangedValue, setTypeChangedValue] = useState(false);
   const { control, handleSubmit, reset, watch } = useForm({
     mode: "all",
   });
@@ -110,12 +109,9 @@ const MainTabModal = ({
                           error={fieldState.error?.message}
                           {...field}
                           onChange={(val) => {
-                            if (fields?.[index]?.label) {
-                              setTypeChanged(true);
-                            } else {
-                              setTypeChangedIndex(index);
-                              field?.onChange(val);
-                            }
+                            field?.onChange(val);
+                            setTypeChanged(true);
+                            setTypeChangedIndex(index);
                           }}
                         />
                       )}
@@ -134,8 +130,6 @@ const MainTabModal = ({
                       )}
                       rules={{
                         required: "This field is required",
-                        validate: (value) =>
-                          value.length <= 100 || "Max length is 100 characters", // 自定义校验
                       }}
                       name={`megaTabs.${index}.label`}
                       control={control}
@@ -151,15 +145,9 @@ const MainTabModal = ({
                       <Button plain monochrome onClick={() => remove(index)}>
                         <Icon source={CircleMinusMinor}></Icon>
                       </Button>
-                      {fields.length - 1 === index && (
-                        <Button
-                          plain
-                          monochrome
-                          onClick={() => append({ type: "tabs" })}
-                        >
-                          <Icon source={CirclePlusMinor}></Icon>
-                        </Button>
-                      )}
+                      <Button plain monochrome onClick={() => append()}>
+                        <Icon source={CirclePlusMinor}></Icon>
+                      </Button>
                     </div>
                   </FormLayout.Group>
                 );
@@ -169,7 +157,7 @@ const MainTabModal = ({
                 plain
                 monochrome
                 icon={CirclePlusMinor}
-                onClick={() => append({ type: "tabs" })}
+                onClick={() => append()}
               >
                 Add
               </Button>
@@ -177,31 +165,29 @@ const MainTabModal = ({
           </FormLayout>
         </Form>
 
-        {typeChanged && (
-          <Modal
-            open={typeChanged}
-            onClose={() => setTypeChanged(false)}
-            title="提醒"
-            primaryAction={{
-              content: "确定",
-              onAction: () => {
-                remove(typeChangedIndex);
-                setTypeChanged(false);
-              },
-            }}
-            secondaryActions={{
-              content: "取消",
-              destructive: true,
-              onAction: () => {
-                setTypeChanged(false);
-              },
-            }}
-          >
-            <Modal.Section>
-              <p>切换分类会清除此列数据</p>
-            </Modal.Section>
-          </Modal>
-        )}
+        <Modal
+          open={typeChanged}
+          onClose={() => setTypeChanged(false)}
+          title="提醒"
+          primaryAction={{
+            content: "确定",
+            onAction: () => {
+              remove(typeChangedIndex);
+              setTypeChanged(false);
+            },
+          }}
+          secondaryActions={{
+            content: "取消",
+            destructive: true,
+            onAction: () => {
+              setTypeChanged(false);
+            },
+          }}
+        >
+          <Modal.Section>
+            <p>切换分类会清除此列数据</p>
+          </Modal.Section>
+        </Modal>
       </Modal.Section>
     </Modal>
   );

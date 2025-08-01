@@ -49,7 +49,7 @@ const SubTabListProductModal = ({
   subTabListEditIndex,
   subTabListProductsEditIndex = 0,
   subTabListCategoryEditIndex,
-  selectedSubTabType = "tabs",
+  selectedSubTabType,
 }) => {
   const { control, handleSubmit, reset } = useForm({
     mode: "all",
@@ -73,6 +73,7 @@ const SubTabListProductModal = ({
       if (subTabList && Array.isArray(subTabList)) {
         subTabList.forEach((item) => subTabTab.push(item));
       }
+      console.log(subTabTab, "subTabTab");
       reset({
         tabListProducts: subTabTab,
       });
@@ -81,6 +82,7 @@ const SubTabListProductModal = ({
       if (list && Array.isArray(list)) {
         list.forEach((item) => tabListProducts.push(item));
       }
+      console.log(tabListProducts, "tabListProducts");
       reset({
         tabListProducts: tabListProducts,
       });
@@ -105,8 +107,9 @@ const SubTabListProductModal = ({
             console.log(formData, "formData");
             const { tabListProducts } = formData;
             let _headerSetting = cloneDeep(headerSetting);
+            let result = [];
             if (selectedSubTabType === "list") {
-              _headerSetting = _headerSetting.map((item, index) => {
+              result = _headerSetting.map((item, index) => {
                 if (subTabListEditIndex === index) {
                   const { tabs = [] } = item;
                   return {
@@ -122,7 +125,7 @@ const SubTabListProductModal = ({
                 }
               });
             } else if (selectedSubTabType === "tabs") {
-              _headerSetting = updateNestedTabs(
+              result = updateNestedTabs(
                 _headerSetting,
                 subTabListEditIndex,
                 subTabListProductsEditIndex,
@@ -130,7 +133,7 @@ const SubTabListProductModal = ({
                 tabListProducts
               );
             }
-            !!_headerSetting?.length && onSave && onSave(_headerSetting);
+            onSave && onSave(result);
           })();
         },
       }}
@@ -161,15 +164,8 @@ const SubTabListProductModal = ({
                       )}
                       rules={{
                         required: "This field is required",
-                        validate: (value) =>
-                          value.length <= 100 || "Max length is 100 characters", // 自定义校验
                       }}
-                      // name={`${
-                      //   selectedSubTabType === "list"
-                      //     ? `tabListProducts.${index}.label`
-                      //     : `tabListProducts.${index}.label`
-                      // }`}
-                      name={`tabListProducts.${index}.title`}
+                      name={`tabListProducts.${index}.label`}
                       control={control}
                     />
                     <Controller
@@ -187,18 +183,9 @@ const SubTabListProductModal = ({
                       control={control}
                     />
                     <Controller
-                      render={({ field, fieldState }) => (
-                        <TextField
-                          label="img"
-                          requiredIndicator
-                          required
-                          error={fieldState.error?.message}
-                          {...field}
-                        />
+                      render={({ field }) => (
+                        <TextField label="img" {...field} />
                       )}
-                      rules={{
-                        required: "This field is required",
-                      }}
                       name={`tabListProducts.${index}.img`}
                       control={control}
                     />
@@ -206,11 +193,9 @@ const SubTabListProductModal = ({
                       <Button plain monochrome onClick={() => remove(index)}>
                         <Icon source={CircleMinusMinor}></Icon>
                       </Button>
-                      {fields.length - 1 === index && (
-                        <Button plain monochrome onClick={() => append()}>
-                          <Icon source={CirclePlusMinor}></Icon>
-                        </Button>
-                      )}
+                      <Button plain monochrome onClick={() => append()}>
+                        <Icon source={CirclePlusMinor}></Icon>
+                      </Button>
                     </div>
                   </FormLayout.Group>
                 );

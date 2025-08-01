@@ -26,6 +26,10 @@ export default function App() {
                   label: t("Collection.pageName"),
                   destination: "/collection",
                 },
+                {
+                  label: `${t("Collection.pageName")}-v5`,
+                  destination: "/collection-v5",
+                },
               ]}
             />
             <Routes pages={pages} />

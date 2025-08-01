@@ -10,7 +10,6 @@ import {
   Box,
   Select,
   ButtonGroup,
-  InlineError,
 } from "@shopify/polaris";
 import {
   SearchMajor,
@@ -117,12 +116,6 @@ const Navbar = () => {
 
   const [subTabCategoryEdit, setSubTabCategoryEdit] = useState(false);
   const [selectedSubTabType, setSelectedSubTabType] = useState("");
-  const [error, setError] = useState("");
-  const [maxLengthError, setMaxLengthError] = useState("");
-
-  const [deleteCollectModal, setDeleteCollectModal] = useState(false);
-
-  const [changeTabStyle, setChangeTabStyle] = useState(false);
 
   const userCenterSetting = {
     signIn: "Sign in",
@@ -1422,13 +1415,7 @@ const Navbar = () => {
             href={url}
           >
             <span className={s.mainNavLinkText}>{item.label}</span>
-            {item.tag
-              ? item.tag?.split(",")?.map((itemTag) => (
-                  <span key={itemTag} className={s.headerTag}>
-                    {itemTag}
-                  </span>
-                ))
-              : ""}
+            {item.tag ? <span className={s.headerTag}>{item.tag}</span> : ""}
           </a>
         }
 
@@ -1439,19 +1426,11 @@ const Navbar = () => {
     );
   };
 
-  const MegaProductContain = ({
-    tab,
-    index,
-    refidx,
-    seeMore,
-    tabLinks = [],
-    type,
-  }) => {
+  const MegaProductContain = ({ tab, index, refidx, seeMore }) => {
     const { list = [], links = [], more } = tab;
-    const linksTemp = type === "tabs" ? tabLinks : links;
     const moreLink = more || seeMore;
     const listLen = list && list.length > 4 ? 4 : list.length;
-    const linksLen = (linksTemp && linksTemp.length) || 0;
+    const linksLen = (links && links.length) || 0;
     return (
       <div
         className={`${s.megaProductContain} ${
@@ -1508,7 +1487,6 @@ const Navbar = () => {
               plain
               monochrome
               icon={CirclePlusMinor}
-              disabled={!isEdit}
               onClick={() => {
                 setSku();
                 setTitle();
@@ -1519,7 +1497,6 @@ const Navbar = () => {
                 setCurrentLastChild(list?.length || 0);
                 // setIsEditTab(true);
                 setSubTabListEdit(true);
-                setSelectedSubTabType(type);
               }}
             >
               Add
@@ -1528,7 +1505,7 @@ const Navbar = () => {
         </ul>
         <div className="flex items-center justify-between pt-6">
           <div className={s.megaCollectLinks}>
-            {linksTemp?.map((item, idx) => {
+            {links.map((item, idx) => {
               return (
                 <div key={idx}>
                   <a
@@ -1551,7 +1528,6 @@ const Navbar = () => {
               plain
               monochrome
               icon={CirclePlusMinor}
-              disabled={!isEdit}
               onClick={() => {
                 setSubTabLinksEdit(true);
               }}
@@ -1592,19 +1568,17 @@ const Navbar = () => {
                 className={s.metaProductCollectItem}
                 key={idx}
                 onClick={() => {
-                  if (isEdit) {
-                    setCurrentSubChild(index);
-                    setCurrentLastChild(idx);
-                    setTitle(item.title);
-                    setDescription(item.description);
-                    setImg(item.img);
-                    setHref(item.href);
-                    setAllLabel(item?.all?.label);
-                    setAllHref(item?.all?.href);
-                    setMoreLabel(item?.more?.label);
-                    setMoreHref(item?.more?.href);
-                    setIsEditCollect(true);
-                  }
+                  setCurrentSubChild(index);
+                  setCurrentLastChild(idx);
+                  setTitle(item.title);
+                  setDescription(item.description);
+                  setImg(item.img);
+                  setHref(item.href);
+                  setAllLabel(item?.all?.label);
+                  setAllHref(item?.all?.href);
+                  setMoreLabel(item?.more?.label);
+                  setMoreHref(item?.more?.href);
+                  setIsEditCollect(true);
                 }}
               >
                 <a
@@ -1654,16 +1628,14 @@ const Navbar = () => {
                           }_copy`
                         )}
                         onClick={(e) => {
-                          if (isEdit) {
-                            setLabel(product.label);
-                            setHref(product.href);
-                            setCurrentSubChild(index);
-                            setCurrentLastChild(idx);
-                            setCurrentProductIndex(i);
-                            setIsEditCollectProduct(true);
-                            e.preventDefault();
-                            e.stopPropagation();
-                          }
+                          setLabel(product.label);
+                          setHref(product.href);
+                          setCurrentSubChild(index);
+                          setCurrentLastChild(idx);
+                          setCurrentProductIndex(i);
+                          setIsEditCollectProduct(true);
+                          e.preventDefault();
+                          e.stopPropagation();
                         }}
                       >
                         {product.label}
@@ -1674,7 +1646,6 @@ const Navbar = () => {
                       plain
                       monochrome
                       icon={CirclePlusMinor}
-                      disabled={!isEdit}
                       onClick={(e) => {
                         setLabel();
                         setHref();
@@ -1728,7 +1699,6 @@ const Navbar = () => {
             plain
             monochrome
             icon={CirclePlusMinor}
-            disabled={!isEdit}
             onClick={() => {
               setCurrentSubChild(index);
               setCurrentLastChild(collects?.length || 0);
@@ -1757,12 +1727,12 @@ const Navbar = () => {
       const obj = {};
       tabs?.forEach((tab, idx) => {
         const tabKeys = Object.keys(tab);
-        if (tabKeys.includes("collects")) {
-          obj[`${index}_${idx}`] = "collects";
+        if (tabKeys.includes("list")) {
+          obj[`${index}_${idx}`] = "list";
         } else if (tabKeys.includes("tabs")) {
           obj[`${index}_${idx}`] = "tabs";
-        } else if (tabKeys.includes("list")) {
-          obj[`${index}_${idx}`] = "list";
+        } else if (tabKeys.includes("collects")) {
+          obj[`${index}_${idx}`] = "collects";
         }
         return obj;
       });
@@ -1795,16 +1765,17 @@ const Navbar = () => {
                                 }`}
                                 key={idx}
                                 onClick={() => {
-                                  if (isEdit) {
-                                    setLabel(tab.label);
-                                    setIsEditLabel(true);
-                                  }
+                                  setLabel(tab.label);
+                                  setIsEditLabel(true);
                                 }}
                               >
                                 <span
                                   onMouseEnter={() => {
                                     setCurrentChild(idx);
                                     setCurrentSubTab(0);
+                                    setSelectedSubTabType(
+                                      selectedSubLists[`${index}_${idx}`]
+                                    );
                                   }}
                                 >
                                   {tab.label}
@@ -1840,7 +1811,6 @@ const Navbar = () => {
                       <Button
                         plain
                         monochrome
-                        disabled={!isEdit}
                         icon={CirclePlusMinor}
                         onClick={() => {
                           setMainTabEdit(true);
@@ -1855,20 +1825,6 @@ const Navbar = () => {
                       s[`megaTab${mode || "normal"}Content`]
                     }`}
                   >
-                    <div className="absolute z-[10] right-4 top-0">
-                      <Button
-                        primary
-                        disabled={!isEdit}
-                        onClick={() => {
-                          setChangeTabStyle(true);
-                          setSelectedSubTabType(
-                            selectedSubLists[`${index}_${currentChild}`]
-                          );
-                        }}
-                      >
-                        更换样式
-                      </Button>
-                    </div>
                     {tabs?.map((tab, idx) => {
                       const subTabEmpty =
                         !tab?.tabs && !tab?.collects && !tab?.list;
@@ -1894,9 +1850,7 @@ const Navbar = () => {
                             <MegaProductContain
                               tab={tab}
                               index={0}
-                              tabLinks={links}
                               seeMore={more}
-                              type="list"
                               refidx={idx + 1}
                             />
                           )}
@@ -1928,7 +1882,6 @@ const Navbar = () => {
                                       plain
                                       monochrome
                                       icon={CirclePlusMinor}
-                                      disabled={!isEdit}
                                       onClick={() => {
                                         setSubTabCategoryEdit(true);
                                       }}
@@ -1944,10 +1897,8 @@ const Navbar = () => {
                                     <MegaProductContain
                                       key={subidx}
                                       tab={subtab}
-                                      tabLinks={tab?.links}
                                       seeMore={tab.more}
                                       index={subidx}
-                                      type={"tabs"}
                                       refidx={`${idx + 1}_${subidx + 1}`}
                                     />
                                   );
@@ -2011,7 +1962,6 @@ const Navbar = () => {
                       plain
                       monochrome
                       icon={CirclePlusMinor}
-                      disabled={!isEdit}
                       onClick={() => {
                         setLinkMode(mode || "");
                         setMainLinksEdit(true);
@@ -2058,7 +2008,6 @@ const Navbar = () => {
                       plain
                       monochrome
                       icon={CirclePlusMinor}
-                      disabled={!isEdit}
                       onClick={() => {
                         setMainDealsEdit(true);
                       }}
@@ -2096,21 +2045,9 @@ const Navbar = () => {
                                   `navimenu_${index + 1}_1_${idx + 1}_copy`
                                 )}
                               ></a>
-                              <p
-                                style={{
-                                  color:
-                                    link.theme === "light" ? "#000" : "#fff",
-                                }}
-                                className={classNames(s.dealsTitle)}
-                              >
-                                {link.title}
-                              </p>
+                              <p className={s.dealsTitle}>{link.title}</p>
                               <a
                                 className={s.linkBtn}
-                                style={{
-                                  color:
-                                    link.theme === "light" ? "#000" : "#fff",
-                                }}
                                 href={handleMenuUrl(
                                   link.href,
                                   false,
@@ -2440,11 +2377,11 @@ const Navbar = () => {
           <Spinner accessibilityLabel="Spinner example" size="large" />
         </div>
       )}
-      <Box className="flex justify-end gap-4 pr-4 py-3">
+      <Box className="flex justify-end gap-4 pr-4">
         {isEdit ? (
           <>
-            <Button onClick={() => setIsEdit(false)}>关闭</Button>
-            {/* <Button primary>保存</Button> */}
+            <Button onClick={() => setIsEdit(false)}>取消</Button>
+            <Button primary>保存</Button>
           </>
         ) : (
           <Button primary onClick={() => setIsEdit(true)}>
@@ -2500,11 +2437,6 @@ const Navbar = () => {
             onAction: () => {
               let _headerSetting = cloneDeep(headerSetting);
               let item = _headerSetting[current].tabs[currentChild];
-              if (!label.trim()) {
-                setError("This field is required");
-                return;
-              }
-              setError("");
               item.label = label;
               updateMenus(_headerSetting, () => {
                 setIsEditLabel(false);
@@ -2516,12 +2448,10 @@ const Navbar = () => {
             <Form>
               <FormLayout>
                 <TextField
-                  requiredIndicator
                   label="label"
                   value={label}
                   onChange={(value) => setLabel(value)}
                 />
-                {error && <InlineError message={error} fieldID="label" />}
               </FormLayout>
             </Form>
           </Modal.Section>
@@ -2622,175 +2552,106 @@ const Navbar = () => {
           </Modal.Section>
         </Modal>
 
-        {isEditCollect && (
-          <Modal
-            title="collect"
-            open={isEditCollect}
-            onClose={() => setIsEditCollect(false)}
-            primaryAction={{
-              content: "确定",
-              onAction: () => {
-                if (
-                  !title?.trim() ||
-                  !description?.trim() ||
-                  !img?.trim() ||
-                  !href?.trim()
-                ) {
-                  setError("This field is required");
-                  return;
-                }
-                if (
-                  title?.length > 100 ||
-                  allLabel?.length > 100 ||
-                  allHref?.length > 100
-                ) {
-                  setMaxLengthError("Max length is 100 characters");
-                  return;
-                }
-                setError("");
-                setMaxLengthError("");
-                let _headerSetting = cloneDeep(headerSetting);
-                let parent = _headerSetting[current].tabs[currentChild];
-                if (!parent.collects) {
-                  parent.collects = [];
-                }
-                if (!parent.collects[currentLastChild]) {
-                  parent.collects[currentLastChild] = {};
-                }
-                let item = parent.collects[currentLastChild];
-                item.title = title;
-                item.description = description;
-                item.img = img;
-                item.href = href;
-                if (!item.all) {
-                  item.all = {};
-                }
-                item.all.label = allLabel;
-                item.all.href = allHref;
-                if (!item.more) {
-                  item.more = {};
-                }
-                item.more.label = moreLabel;
-                item.more.href = moreHref;
-                updateMenus(_headerSetting, () => {
-                  setIsEditCollect(false);
-                });
-              },
-            }}
-            secondaryActions={{
-              content: "删除",
-              destructive: true,
-              onAction: () => {
-                setDeleteCollectModal(true);
-              },
-            }}
-          >
-            <Modal.Section>
-              <Form>
-                <FormLayout>
-                  <TextField
-                    requiredIndicator
-                    label="title"
-                    value={title}
-                    onChange={(value) => setTitle(value)}
-                  />
-                  {error && !title && (
-                    <InlineError message={error} fieldID="title" />
-                  )}
-                  {maxLengthError && title?.length > 100 && (
-                    <InlineError message={maxLengthError} />
-                  )}
-                  <TextField
-                    label="description"
-                    requiredIndicator
-                    value={description}
-                    onChange={(value) => setDescription(value)}
-                  />
-                  {error && !description && (
-                    <InlineError message={error} fieldID="description" />
-                  )}
-                  <TextField
-                    requiredIndicator
-                    labelAction={labelAction}
-                    label="img"
-                    value={img}
-                    onChange={(value) => setImg(value)}
-                  />
-                  {error && !img && <InlineError message={error} />}
-                  <TextField
-                    requiredIndicator
-                    label="href"
-                    value={href}
-                    onChange={(value) => setHref(value)}
-                  />
-                  {error && !href && <InlineError message={error} />}
-                  <TextField
-                    label="allLabel"
-                    value={allLabel}
-                    onChange={(value) => setAllLabel(value)}
-                  />
-                  {maxLengthError && allLabel?.length > 100 && (
-                    <InlineError message={maxLengthError} />
-                  )}
-                  <TextField
-                    label="allHref"
-                    value={allHref}
-                    onChange={(value) => setAllHref(value)}
-                  />
-                  <TextField
-                    label="moreLabel"
-                    value={moreLabel}
-                    onChange={(value) => setMoreLabel(value)}
-                  />
-                  {maxLengthError && moreLabel?.length > 100 && (
-                    <InlineError message={maxLengthError} />
-                  )}
-                  <TextField
-                    label="moreHref"
-                    value={moreHref}
-                    onChange={(value) => setMoreHref(value)}
-                  />
-                </FormLayout>
-              </Form>
-            </Modal.Section>
-            {deleteCollectModal && (
-              <Modal
-                open={deleteCollectModal}
-                onClose={() => setDeleteCollectModal(false)}
-                title="请确认删除分类"
-                primaryAction={{
-                  content: "确定",
-                  onAction: () => {
-                    let _headerSetting = cloneDeep(headerSetting);
-                    let parent = _headerSetting[current].tabs[currentChild];
-                    if (!parent.collects[currentLastChild]) {
-                      setIsEditCollect(false);
-                      return;
-                    }
-                    parent.collects.splice(currentLastChild, 1);
-                    updateMenus(_headerSetting, () => {
-                      setIsEditCollect(false);
-                      setDeleteCollectModal(false);
-                    });
-                  },
-                }}
-                secondaryActions={{
-                  content: "取消",
-                  destructive: true,
-                  onAction: () => {
-                    setDeleteCollectModal(false);
-                  },
-                }}
-              >
-                <Modal.Section>
-                  <p className="relative">
-                    温馨提示：一旦确认删除分类，所有数据都被删除掉
-                  </p>
-                </Modal.Section>
-              </Modal>
-            )}
-          </Modal>
-        )}
+        <Modal
+          title="collect"
+          open={isEditCollect}
+          onClose={() => setIsEditCollect(false)}
+          primaryAction={{
+            content: "确定",
+            onAction: () => {
+              let _headerSetting = cloneDeep(headerSetting);
+              let parent = _headerSetting[current].tabs[currentChild];
+              if (!parent.collects) {
+                parent.collects = [];
+              }
+              if (!parent.collects[currentLastChild]) {
+                parent.collects[currentLastChild] = {};
+              }
+              let item = parent.collects[currentLastChild];
+              item.title = title;
+              item.description = description;
+              item.img = img;
+              item.href = href;
+              if (!item.all) {
+                item.all = {};
+              }
+              item.all.label = allLabel;
+              item.all.href = allHref;
+              if (!item.more) {
+                item.more = {};
+              }
+              item.more.label = moreLabel;
+              item.more.href = moreHref;
+              updateMenus(_headerSetting, () => {
+                setIsEditCollect(false);
+              });
+            },
+          }}
+          secondaryActions={{
+            content: "删除",
+            destructive: true,
+            onAction: () => {
+              let _headerSetting = cloneDeep(headerSetting);
+              let parent = _headerSetting[current].tabs[currentChild];
+              if (!parent.collects[currentLastChild]) {
+                setIsEditCollect(false);
+                return;
+              }
+              parent.collects.splice(currentLastChild, 1);
+              updateMenus(_headerSetting, () => {
+                setIsEditCollect(false);
+              });
+            },
+          }}
+        >
+          <Modal.Section>
+            <Form>
+              <FormLayout>
+                <TextField
+                  label="title"
+                  value={title}
+                  onChange={(value) => setTitle(value)}
+                />
+                <TextField
+                  label="description"
+                  value={description}
+                  onChange={(value) => setDescription(value)}
+                />
+                <TextField
+                  labelAction={labelAction}
+                  label="img"
+                  value={img}
+                  onChange={(value) => setImg(value)}
+                />
+                <TextField
+                  label="href"
+                  value={href}
+                  onChange={(value) => setHref(value)}
+                />
+                <TextField
+                  label="allLabel"
+                  value={allLabel}
+                  onChange={(value) => setAllLabel(value)}
+                />
+                <TextField
+                  label="allHref"
+                  value={allHref}
+                  onChange={(value) => setAllHref(value)}
+                />
+                <TextField
+                  label="moreLabel"
+                  value={moreLabel}
+                  onChange={(value) => setMoreLabel(value)}
+                />
+                <TextField
+                  label="moreHref"
+                  value={moreHref}
+                  onChange={(value) => setMoreHref(value)}
+                />
+              </FormLayout>
+            </Form>
+          </Modal.Section>
+        </Modal>
 
         <Modal
           title="product"
@@ -2865,6 +2726,7 @@ const Navbar = () => {
             </Form>
           </Modal.Section>
         </Modal>
+
         <Modal
           title="sublink"
           open={isSubEditLink}
@@ -2898,6 +2760,7 @@ const Navbar = () => {
             </Form>
           </Modal.Section>
         </Modal>
+
         <Modal
           title="morelink"
           open={isEditLinkMore}
@@ -2933,6 +2796,7 @@ const Navbar = () => {
             </Form>
           </Modal.Section>
         </Modal>
+
         <Modal
           title="more"
           open={isEditMore}
@@ -2961,58 +2825,55 @@ const Navbar = () => {
             </Form>
           </Modal.Section>
         </Modal>
-        {mainCategoryEdit && (
-          <MainCategoryModal
-            mainCategoryEdit={mainCategoryEdit}
-            headerSetting={headerSetting}
-            onClose={() => setMainCategoryEdit(false)}
-            onSave={(dataSource) => {
-              updateMenus(dataSource, () => {
-                setMainCategoryEdit(false);
-              });
-            }}
-          />
-        )}
-        {mainTabEdit && (
-          <MainTabModal
-            mainTabEdit={mainTabEdit}
-            headerSetting={headerSetting}
-            mainTabEditIndex={current}
-            onClose={() => setMainTabEdit(false)}
-            onSave={(dataSource) => {
-              updateMenus(dataSource, () => {
-                setMainTabEdit(false);
-              });
-            }}
-          />
-        )}
-        {mainDealsEdit && (
-          <MainDealsModal
-            mainDealsEdit={mainDealsEdit}
-            headerSetting={headerSetting}
-            mainDealsEditIndex={current}
-            onClose={() => setMainDealsEdit(false)}
-            onSave={(dataSource) => {
-              updateMenus(dataSource, () => {
-                setMainDealsEdit(false);
-              });
-            }}
-          />
-        )}
-        {mainLinksEdit && (
-          <MainLinksModal
-            mainLinksEdit={mainLinksEdit}
-            headerSetting={headerSetting}
-            mainLinksEditIndex={current}
-            onClose={() => setMainLinksEdit(false)}
-            mode={linkMode}
-            onSave={(dataSource) => {
-              updateMenus(dataSource, () => {
-                setMainLinksEdit(false);
-              });
-            }}
-          />
-        )}
+
+        <MainCategoryModal
+          mainCategoryEdit={mainCategoryEdit}
+          headerSetting={headerSetting}
+          onClose={() => setMainCategoryEdit(false)}
+          onSave={(dataSource) => {
+            updateMenus(dataSource, () => {
+              setMainCategoryEdit(false);
+            });
+          }}
+        />
+
+        <MainTabModal
+          mainTabEdit={mainTabEdit}
+          headerSetting={headerSetting}
+          mainTabEditIndex={current}
+          onClose={() => setMainTabEdit(false)}
+          onSave={(dataSource) => {
+            updateMenus(dataSource, () => {
+              setMainTabEdit(false);
+            });
+          }}
+        />
+
+        <MainDealsModal
+          mainDealsEdit={mainDealsEdit}
+          headerSetting={headerSetting}
+          mainDealsEditIndex={current}
+          onClose={() => setMainDealsEdit(false)}
+          onSave={(dataSource) => {
+            updateMenus(dataSource, () => {
+              setMainDealsEdit(false);
+            });
+          }}
+        />
+
+        <MainLinksModal
+          mainLinksEdit={mainLinksEdit}
+          headerSetting={headerSetting}
+          mainLinksEditIndex={current}
+          onClose={() => setMainLinksEdit(false)}
+          mode={linkMode}
+          onSave={(dataSource) => {
+            updateMenus(dataSource, () => {
+              setMainLinksEdit(false);
+            });
+          }}
+        />
+
         {subTabListEdit && (
           <SubTabListProductModal
             subTabListEdit={subTabListEdit}
@@ -3029,6 +2890,7 @@ const Navbar = () => {
             }}
           />
         )}
+
         {subTabLinksEdit && (
           <SubTabLinksModal
             subTabLinksEdit={subTabLinksEdit}
@@ -3043,6 +2905,7 @@ const Navbar = () => {
             subTabLinksEditIndex={currentChild}
           />
         )}
+
         {subTabCategoryEdit && (
           <SubTabCategoryModal
             subTabCategoryEdit={subTabCategoryEdit}
@@ -3056,37 +2919,6 @@ const Navbar = () => {
               });
             }}
           />
-        )}
-
-        {changeTabStyle && (
-          <Modal
-            title="请确认删除分类"
-            open={changeTabStyle}
-            onClose={() => setChangeTabStyle(false)}
-            primaryAction={{
-              content: "确定",
-              onAction: () => {
-                let _headerSetting = cloneDeep(headerSetting);
-                _headerSetting?.[current]?.tabs?.splice(currentChild, 1);
-                updateMenus(_headerSetting, () => {
-                  setChangeTabStyle(false);
-                });
-              },
-            }}
-            secondaryActions={{
-              content: "取消",
-              destructive: true,
-              onAction: () => {
-                setChangeTabStyle(false);
-              },
-            }}
-          >
-            <Modal.Section>
-              <p className="text-center">
-                温馨提示：一旦确认删除分类， 原有数据将被删除掉
-              </p>
-            </Modal.Section>
-          </Modal>
         )}
       </header>
     </>
